@@ -1,0 +1,32 @@
+import numpy as np
+import matplotlib.pyplot as plt
+matrix=[]
+for i in xrange (10):
+    row=[0]
+    for j in xrange (9):
+        row.append(0)
+    matrix.append(row)
+cell_type=matrix
+cell_type[4][4]=1
+#create a deterministic matrix using death, growth, conversion rates from the paper
+# what we need: growth rates, death rates, and conversion rates of E to M
+#: (a) malignant cells divided at a slower mean rate than normal cells; (b) population-doubling time values of malignant cells were more heterogenous than those of normal cells; 
+#(c) cultures from nonmalignant atypias showed population-doubling time means and standard deviations between those of normal and malignant cells; and 
+# (d) long term mammary tumor cell lines divided more slowly than did normal cells. (per the internet article)
+# epithelial mesynchyml transition is EMT
+
+c =np.array([(1,0,0,0,0,0,0,0,0,0,0),   #Her2_Diss
+(1,1,0,1,0,0,0,0,0,0,0), #Her2_Dimerization
+(0,0,1,1,0,0,0,0,0,0,0), #Her2_mRNA_Trans
+(0,1,1,1,0,1,0,0,0,0,0), #Her2_Dimerization
+(0,0,0,1,1,1,0,0,0,0,0), #IL6*gp130 -> IL6 + gp130
+(0,0,0,0,1,1,1,0,0,1,0), #IL6_mRNA_Trans
+(0,0,0,0,1,0,1,1,1,0,0), #IL6 + gp130 -> IL6*gp130 
+(1,0,0,0,0,0,1,0,0,0,0), #EM_Trans1
+(0,0,0,0,0,0,1,0,0,0,0), #Cell death
+(0,0,0,0,1,0,0,0,0,1,0), #ME_Trans
+(0,0,0,0,0,1,0,0,0,0,1) #IL6 Degredation/#Her2 Degredation
+])
+
+M=matrix(c)
+M.eigenvectors_right()
