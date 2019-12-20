@@ -1,0 +1,34 @@
+var("egfr, her2, il6, gp_130, il6gp130, emt, met, mir93, her2_egfr")
+
+a= 10  #Her2_Diss
+b= 10  #Her2_Dimerization
+c= 1   #Her2_mRNA_Trans
+d= 10  #Her2_Dimerization
+e= 10  #IL6*gp130 -> IL6 + gp130
+f= 1   #IL6_mRNA_Trans
+g= 10  #IL6 + gp130 -> IL6*gp130    
+h= 10  #IL6 + gp130 -> IL6*gp130
+i= 0.1 #EM_Trans1
+j= 0.1 #EM_Trans1
+k= 0.1 #ME_Trans2
+l= 0.1 #Cell death
+m= 0.1 #ME_Trans
+n= 0.1 #ME_Trans
+o= .1   #IL6 Degredation
+p= .1   #Her2 Degredation
+
+egfr_prime= a*her2*egfr-b*egfr
+her2_prime= c*her2+ a*her2*egfr - d*her2 - p*her2
+il6_prime= e*il6*gp_130 + f*il6 - g*il6 - o*il6
+gp_130_prime= e*il6*gp_130 - h*gp_130
+il6gp130_prime= g*il6 + h*gp_130 - e*il6*gp_130 + i*met - j*il6*gp_130
+emt_prime= j*il6*gp_130 - k*emt
+met_prime= 2*k*emt - l*met - i*met + m*mir93 + n*her2*egfr
+mir93_prime= k* emt - m*mir93
+her2_egfr_prime= b*egfr+d*her2+k*emt - a*her2*egfr - n*her2*egfr
+
+t=srange (0,100,.1)
+# og ics: [.5,.5,.5,.7,0,.5,.5,.5,0]
+sol=desolve_odeint ([egfr_prime, her2_prime, il6_prime, gp_130_prime, il6gp130_prime, emt_prime, met_prime, mir93_prime, her2_egfr_prime], ics= [.5,.5,.5,.7,0,.5,.5,.5,0], times=t, dvars=[egfr, her2, il6, gp_130, il6gp130, emt, met, mir93, her2_egfr])
+
+list_plot(zip(t,sol[:,0]), axes_labels=["time", "concentration "], legend_label= "egfr") + list_plot(zip(t,sol[:,1]), color= "green", legend_label= "her2") + list_plot(zip(t,sol[:,2]), color= "purple", legend_label= "il6") + list_plot(zip(t,sol[:,3]), color= "red", legend_label= "gp_130") + list_plot(zip(t,sol[:,4]), color= "pink", legend_label= "il6gp130") + list_plot(zip(t,sol[:,5]), color= "yellow", legend_label= "emt") + list_plot(zip(t,sol[:,6]), color= "orange", legend_label= "met") + list_plot(zip(t,sol[:,7]), color= "black", legend_label= "mir93") + list_plot(zip(t,sol[:,8]), color= "gray", legend_label= "her2_egfr")
